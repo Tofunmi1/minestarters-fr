@@ -1,65 +1,106 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState, useRef, KeyboardEvent } from "react";
+import { MSLogo } from "./components/icons";
+import LoginView from "./components/LoginView";
+import OtpView from "./components/OtpView";
+import LoadingView from "./components/LoadingView";
+
+type View = "login" | "otp" | "loading";
+
+export default function LoginPage() {
+  const [view, setView] = useState<View>("login");
+  const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  // ── Email handlers ────────────────────────────────────────────────────────
+
+  const handleEmailSubmit = () => {
+    if (!email.includes("@")) return;
+    setView("otp");
+  };
+
+  // ── OTP handlers ──────────────────────────────────────────────────────────
+
+  const handleOtpChange = (index: number, value: string) => {
+    if (!/^\d?$/.test(value)) return;
+    const next = [...otp];
+    next[index] = value;
+    setOtp(next);
+    if (value && index < 5) otpRefs.current[index + 1]?.focus();
+    if (next.every(Boolean)) setView("loading");
+  };
+
+  const handleOtpKeyDown = (index: number, e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      otpRefs.current[index - 1]?.focus();
+    }
+    if (e.key === "Enter" && otp.every(Boolean)) {
+      setView("loading");
+    }
+  };
+
+  const handleOtpPaste = (e: React.ClipboardEvent) => {
+    const text = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+    if (!text) return;
+    e.preventDefault();
+    const next = [...otp];
+    text.split("").forEach((d, i) => { next[i] = d; });
+    setOtp(next);
+    otpRefs.current[Math.min(text.length, 5)]?.focus();
+  };
+
+  const handleResend = () => {
+    setOtp(["", "", "", "", "", ""]);
+    otpRefs.current[0]?.focus();
+  };
+
+  // ── Render ────────────────────────────────────────────────────────────────
+
+  const cardClass = [
+    "auth-card",
+    view === "loading" && "auth-card--loading",
+    view === "otp" && "auth-card--otp",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+    <>
+      {/* Top-left logo badge */}
+      <div className="logo-badge">
+        <MSLogo size={24} />
+      </div>
+
+      {/* Full-screen backdrop */}
+      <div className="page-bg">
+        <div className={cardClass}>
+
+          {view === "login" && (
+            <LoginView
+              email={email}
+              onEmailChange={setEmail}
+              onSubmit={handleEmailSubmit}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+          )}
+
+          {view === "otp" && (
+            <OtpView
+              email={email}
+              otp={otp}
+              otpRefs={otpRefs}
+              onOtpChange={handleOtpChange}
+              onOtpKeyDown={handleOtpKeyDown}
+              onOtpPaste={handleOtpPaste}
+              onResend={handleResend}
+            />
+          )}
+
+          {view === "loading" && <LoadingView />}
+
         </div>
-      </main>
-    </div>
+      </div>
+    </>
   );
 }
