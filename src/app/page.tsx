@@ -13,14 +13,10 @@ export default function LoginPage() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  // ── Email handlers ────────────────────────────────────────────────────────
-
   const handleEmailSubmit = () => {
     if (!email.includes("@")) return;
     setView("otp");
   };
-
-  // ── OTP handlers ──────────────────────────────────────────────────────────
 
   const handleOtpChange = (index: number, value: string) => {
     if (!/^\d?$/.test(value)) return;
@@ -55,7 +51,6 @@ export default function LoginPage() {
     otpRefs.current[0]?.focus();
   };
 
-  // ── Render ────────────────────────────────────────────────────────────────
 
   const cardClass = [
     "auth-card",
@@ -67,7 +62,6 @@ export default function LoginPage() {
 
   return (
     <>
-      {/* Full-screen backdrop */}
       <div className="page-bg">
         <div className={cardClass}>
 

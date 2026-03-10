@@ -31,7 +31,7 @@ export default function LoginView({ email, onEmailChange, onSubmit }: LoginViewP
             <input
               id="email-input"
               type="email"
-              placeholder="johndoe@institution.com"
+              placeholder="Email Address"
               value={email}
               onChange={(e: ChangeEvent<HTMLInputElement>) => onEmailChange(e.target.value)}
               autoComplete="email"
