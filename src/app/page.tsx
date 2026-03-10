@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, KeyboardEvent } from "react";
-import { MSLogo } from "./components/icons";
 import LoginView from "./components/LoginView";
 import OtpView from "./components/OtpView";
 import LoadingView from "./components/LoadingView";
@@ -68,11 +67,6 @@ export default function LoginPage() {
 
   return (
     <>
-      {/* Top-left logo badge */}
-      <div className="logo-badge">
-        <MSLogo size={24} />
-      </div>
-
       {/* Full-screen backdrop */}
       <div className="page-bg">
         <div className={cardClass}>

@@ -1,17 +1,14 @@
-export function MSLogo({ size = 22 }: { size?: number }) {
+export function MSLogo({ size = 32 }: { size?: number }) {
+  const width = Math.round(size * (47 / 32));
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <svg width={width} height={size} viewBox="0 0 47 32" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
-        d="M12 2L2 19h20L12 2z"
-        stroke="#3dd6a3"
-        strokeWidth="1.8"
-        strokeLinejoin="round"
+        d="M36.7182 32H30.441L18.4522 11.167L18.2941 11.2094C17.9534 12.0111 17.3492 12.7421 16.9769 13.512C16.8996 13.6709 16.7731 13.8263 16.8118 14.01L23.1592 25.0781L19.2355 32H0L8.77472 16.8176L11.9256 22.3057L9.61777 26.4165H16.1127L16.7731 25.0357L10.4292 13.904L18.3925 0.0635986L36.7218 32H36.7182Z"
+        fill="white"
       />
       <path
-        d="M7 19l5-9 5 9"
-        stroke="#3dd6a3"
-        strokeWidth="1.4"
-        strokeLinejoin="round"
+        d="M39.9009 32.0001L24.8138 5.64718C24.7682 5.45647 24.9333 5.21632 25.0281 5.03974C25.8957 3.39048 26.9952 1.81537 27.8383 0.144918L28.0069 0.00012207L46.3994 32.0001H39.9044H39.9009Z"
+        fill="white"
       />
     </svg>
   );

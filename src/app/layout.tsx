@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
+import LoginView from "./components/LoginView";
 
 const ibmPlexSans = IBM_Plex_Sans({
   variable: "--Font-Family-Body",
