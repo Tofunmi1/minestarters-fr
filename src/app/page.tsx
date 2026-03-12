@@ -91,7 +91,7 @@ export default function LoginPage() {
       if (!pendingWalletType.current) return;
       saveRecent(pendingWalletType.current);
       pendingWalletType.current = null;
-      setView(preAuthRef.current ? "success" : "terms");
+      setView("success");
     },
     onError: (err) => {
       console.error("Wallet connect error:", err);
@@ -152,7 +152,7 @@ export default function LoginPage() {
   // If already authenticated on mount, skip straight to success
   useEffect(() => {
     if (authenticated) setView("success");
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleEmailSubmit = async (emailVal?: string) => {
     const target = emailVal ?? email;
