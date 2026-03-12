@@ -13,6 +13,18 @@ const {
 } = walletIcons;
 const { TokenCRO, TokenUNI } = tokenIcons;
 
+const PRIVY_WALLET_LIST: WalletListEntry[] = [
+  "metamask",
+  "coinbase_wallet",
+  "base_account",
+  "rainbow",
+  "phantom",
+  "zerion",
+  "cryptocom",
+  "uniswap",
+  "okx_wallet",
+];
+
 interface EIP6963Detail {
   info: { rdns: string; name: string; icon: string; uuid: string };
   provider: unknown;
@@ -61,13 +73,23 @@ export const WALLET_DEFS = [
     Icon: WalletCoinbase,
     rdns: null as string | null,
   },
-  {
-    id: "universal_profile" as WalletListEntry,
-    label: "Universal Profile",
-    Icon: WalletCoinbase,
-    rdns: null as string | null,
-  },
 ] as const;
+
+const POPULAR_WALLET_IDS = new Set<WalletListEntry>([
+  "coinbase_wallet",
+  "metamask",
+  "rainbow",
+]);
+
+const WALLET_DEF_MAP = new Map<WalletListEntry, (typeof WALLET_DEFS)[number]>(
+  WALLET_DEFS.map((wallet) => [wallet.id, wallet]),
+);
+
+const formatWalletLabel = (walletId: WalletListEntry) =>
+  walletId
+    .split("_")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
 
 export interface MoreWalletsViewProps {
   onBack: () => void;
@@ -99,9 +121,7 @@ export default function MoreWalletsView({
   onAdd,
 }: MoreWalletsViewProps) {
   const [search, setSearch] = useState("");
-  const [selectedId, setSelectedId] = useState<WalletListEntry>(
-    WALLET_DEFS[0].id,
-  );
+  const [selectedId, setSelectedId] = useState<WalletListEntry | null>(null);
   const [installedProviders, setInstalledProviders] = useState<
     Map<string, unknown>
   >(new Map());
@@ -127,11 +147,34 @@ export default function MoreWalletsView({
       );
   }, []);
 
-  const displayed = WALLET_DEFS.filter((w) =>
+  const privyWallets = PRIVY_WALLET_LIST.filter(
+    (walletId) => !POPULAR_WALLET_IDS.has(walletId),
+  ).map(
+    (walletId) =>
+      WALLET_DEF_MAP.get(walletId) ?? {
+        id: walletId,
+        label: formatWalletLabel(walletId),
+        Icon: WalletCoinbase,
+        rdns: null,
+      },
+  );
+
+  useEffect(() => {
+    if (privyWallets.length === 0) return;
+    if (
+      !selectedId ||
+      !privyWallets.some((wallet) => wallet.id === selectedId)
+    ) {
+      setSelectedId(privyWallets[0].id);
+    }
+  }, [selectedId, privyWallets]);
+
+  const displayed = privyWallets.filter((w) =>
     w.label.toLowerCase().includes(search.toLowerCase()),
   );
 
   const handleAddWallet = () => {
+    if (!selectedId) return;
     onAdd(selectedId);
   };
 

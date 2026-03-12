@@ -983,12 +983,31 @@ body {
   width: 100%;
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
-  scrollbar-width: none;
+  overflow-y: scroll;
+  padding-right: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(10, 10, 10, 0.6) rgba(10, 10, 10, 0.3);
 }
 
 .mw-list::-webkit-scrollbar {
-  display: none;
+  width: 16px;
+}
+
+.mw-list::-webkit-scrollbar-track {
+  background: rgba(10, 10, 10, 0.3);
+  border-radius: 96px;
+}
+
+.mw-list::-webkit-scrollbar-thumb {
+  background: rgba(10, 10, 10, 0.6);
+  border-radius: 96px;
+  border: 4px solid transparent;
+  background-clip: content-box;
+}
+
+.mw-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(10, 10, 10, 0.75);
+  background-clip: content-box;
 }
 
 .mw-empty {

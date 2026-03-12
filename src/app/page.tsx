@@ -30,8 +30,14 @@ type View =
   | "more-wallets";
 
 const RECENT_KEY = "ms_recent_method";
+const DEFAULT_TERMS_URL = "https://www.minestarters.com/terms";
+const DEFAULT_PRIVACY_URL = "https://www.minestarters.com/privacy";
 
 export default function LoginPage() {
+  const termsUrl = process.env.NEXT_PUBLIC_TERMS_URL || DEFAULT_TERMS_URL;
+  const privacyUrl =
+    process.env.NEXT_PUBLIC_PRIVACY_URL || DEFAULT_PRIVACY_URL;
+
   const [view, setView] = useState<View>("login");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -86,12 +92,12 @@ export default function LoginPage() {
   });
 
   const { connectWallet } = useConnectWallet({
-    onSuccess: () => {
+    onSuccess: (result?: { isNewUser?: boolean }) => {
       // Guard: ignore embedded wallet auto-creation — only handle explicit user clicks
       if (!pendingWalletType.current) return;
       saveRecent(pendingWalletType.current);
       pendingWalletType.current = null;
-      setView("success");
+      setView(result?.isNewUser ? "terms" : "success");
     },
     onError: (err) => {
       console.error("Wallet connect error:", err);
@@ -352,6 +358,8 @@ export default function LoginPage() {
 
           {view === "terms" && (
             <TermsView
+              termsUrl={termsUrl}
+              privacyUrl={privacyUrl}
               onCancel={() => {
                 setOtp(["", "", "", "", "", ""]);
                 setView("login");

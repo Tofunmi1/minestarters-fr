@@ -4,9 +4,16 @@ import { TermsIcon, ArrowOutward, CheckIcon } from "./icons";
 interface TermsViewProps {
   onCancel: () => void;
   onContinue: () => void;
+  termsUrl?: string;
+  privacyUrl?: string;
 }
 
-export default function TermsView({ onCancel, onContinue }: TermsViewProps) {
+export default function TermsView({
+  onCancel,
+  onContinue,
+  termsUrl,
+  privacyUrl,
+}: TermsViewProps) {
   const [accepted, setAccepted] = useState(false);
 
   return (
@@ -22,14 +29,30 @@ export default function TermsView({ onCancel, onContinue }: TermsViewProps) {
       </div>
 
       <div className="terms-list">
-        <button className="terms-link-item">
+        <a
+          className="terms-link-item"
+          href={termsUrl || "#"}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => {
+            if (!termsUrl) e.preventDefault();
+          }}
+        >
           <span>View Terms of Service</span>
           <ArrowOutward />
-        </button>
-        <button className="terms-link-item">
+        </a>
+        <a
+          className="terms-link-item"
+          href={privacyUrl || "#"}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => {
+            if (!privacyUrl) e.preventDefault();
+          }}
+        >
           <span>View Privacy Policy</span>
           <ArrowOutward />
-        </button>
+        </a>
       </div>
 
       <div className="terms-checkbox-wrap" onClick={() => setAccepted(!accepted)}>

@@ -26,7 +26,6 @@ export default function WalletView({
   onConnectWallet,
   onMoreWallets,
 }: WalletViewProps) {
-  // Build a set of already-connected wallet types
   const connectedTypes = new Set(wallets.map((w) => w.walletClientType));
   const popularIds = new Set<WalletListEntry>(
     POPULAR.map((wallet) => wallet.id as WalletListEntry),
@@ -87,7 +86,6 @@ export default function WalletView({
             );
           })}
 
-          {/* Wallets added from More Wallets */}
           {dedupedAddedWallets.map((walletId) => {
             const def = WALLET_DEFS.find((w) => w.id === walletId);
             if (!def) return null;
@@ -106,7 +104,6 @@ export default function WalletView({
             );
           })}
 
-          {/* More Wallets → opens the full wallet discovery screen */}
           <button className="oauth-btn" onClick={onMoreWallets}>
             <WalletIcon size={24} />
             <span className="oauth-btn-label">More Wallets</span>
