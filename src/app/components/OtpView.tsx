@@ -1,14 +1,16 @@
 import { KeyboardEvent, RefObject } from "react";
-import { MailIcon } from "./icons";
+import { MailIcon, PhoneIcon } from "./icons";
 
 interface OtpViewProps {
-  email: string;
+  target: string;
+  mode?: "email" | "phone";
   otp: string[];
   otpRefs: RefObject<(HTMLInputElement | null)[]>;
   onOtpChange: (index: number, value: string) => void;
   onOtpKeyDown: (index: number, e: KeyboardEvent<HTMLInputElement>) => void;
   onOtpPaste: (e: React.ClipboardEvent) => void;
   onResend: () => void;
+  error?: string | null;
 }
 
 function maskEmail(email: string) {
@@ -18,30 +20,43 @@ function maskEmail(email: string) {
   return `${masked}@${domain}`;
 }
 
+function maskPhone(phone: string) {
+  const digits = phone.replace(/\D/g, "");
+  if (digits.length < 4) return phone;
+  return "•••• " + digits.slice(-4);
+}
+
 export default function OtpView({
-  email,
+  target,
+  mode = "email",
   otp,
   otpRefs,
   onOtpChange,
   onOtpKeyDown,
   onOtpPaste,
   onResend,
+  error,
 }: OtpViewProps) {
+  const isPhone = mode === "phone";
+  const masked = isPhone ? maskPhone(target) : maskEmail(target);
+
   return (
     <div className="otp-content">
 
-      {/* ── Header ── */}
       <div className="otp-header">
         <div className="otp-icon-wrap">
-          <MailIcon size={40} color="#0A0A0A" />
+          {isPhone
+            ? <PhoneIcon size={40} color="#0A0A0A" />
+            : <MailIcon size={40} color="#0A0A0A" />
+          }
         </div>
         <p className="otp-title">Enter confirmation code</p>
         <p className="otp-sub">
-          A secure one-time passcode has been sent to {maskEmail(email)}
+          A secure one-time passcode has been sent to {masked}
         </p>
       </div>
 
-      {/* ── OTP Boxes: [0][1][2] – [3][4][5] ── */}
+      {/*  [0][1][2] – [3][4][5] */}
       <div className="otp-boxes" onPaste={onOtpPaste}>
         <div className="otp-group">
           {[0, 1, 2].map((i) => (
@@ -77,9 +92,12 @@ export default function OtpView({
         </div>
       </div>
 
+      {/* ── Error ── */}
+      {error && <p className="otp-error">{error}</p>}
+
       {/* ── Resend ── */}
       <p className="resend-text">
-        Didn't receive a code?{" "}
+        Didn&apos;t receive a code?{" "}
         <span className="resend-link" onClick={onResend}>
           Resend.
         </span>
@@ -88,3 +106,4 @@ export default function OtpView({
     </div>
   );
 }
+

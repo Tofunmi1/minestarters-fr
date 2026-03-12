@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
-import LoginView from "./components/LoginView";
+import { Providers } from "./providers";
 
 const ibmPlexSans = IBM_Plex_Sans({
   variable: "--Font-Family-Body",
@@ -27,7 +27,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${ibmPlexSans.variable} ${ibmPlexMono.variable} antialiased`}>{children}</body>
+      <body className={`${ibmPlexSans.variable} ${ibmPlexMono.variable} antialiased`}>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
